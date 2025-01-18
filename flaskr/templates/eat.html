@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_Boost.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>eat</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="{{ url_for('static', filename='chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='modal.js') }}"></script>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body class="bg-light">
+<div class="d-flex fixed-top">
+    <button class="btn btn-primary m-0 menu-button-Smartphone" onclick="toggleMenu()">≡</button>
+</div>
+<div class="d-flex">
+    <!-- サイドメニューのインクルード -->
+    {% include 'sidebar.html' %}
+    <button class="btn btn-primary m-3 menu-button" onclick="toggleMenu()">≡</button>
+    <div class="container-fluid py-4">
+        <h1 class="fas fa-utensils text-center mb-4 mt-4">食費記録一覧</h1>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped w-100 eat-table">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>年</th>
+                        <th>月</th>
+                        <th>金額</th>
+                        <th>操作</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr class="text-center">
+                        <td>{{ record[0] }}</td>
+                        <td>{{ record[1] }}</td>
+                        <td>{{ record[2] }}</td>
+                        <td>
+                            <!-- 入力フォーム -->
+                            <button class="btn btn-sm btn-primary mb-2" onclick="showInputForm({{ record[0] }}, {{ record[1] }})">入力</button>
+                            <div id="modal-input-form-{{ record[0] }}-{{ record[1] }}" class="modal">
+                                <div class="modal-content">
+                                    <span class="close" onclick="closeModal2({{ record[0] }}, {{ record[1] }})">&times;</span>
+                                    <form action="/save_detail" method="POST">
+                                        <input type="hidden" name="year" value="{{ record[0] }}">
+                                        <input type="hidden" name="month" value="{{ record[1] }}">
+                                        <div class="mb-3">
+                                            <label for="amount" class="form-label">金額:</label>
+                                            <input type="number" name="amount" class="form-control" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-success">登録</button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- 編集フォーム -->
+                            <button class="btn btn-sm btn-secondary" onclick="toggleDetails({{ record[0] }}, {{ record[1] }})">編集</button>
+                            <div id="details-{{ record[0] }}-{{ record[1] }}" class="p-3 border rounded bg-light mt-2" style="display:none;">
+                                {% for detail in details[(record[0], record[1])] %}
+                                    <form action="/update_detail" method="POST" class="mb-3">
+                                        <input type="hidden" name="id" value="{{ detail[0] }}">
+                                        <div class="mb-2">
+                                            <label for="amount-{{ detail[0] }}" class="form-label">金額:</label>
+                                            <input type="number" name="amount" id="amount-{{ detail[0] }}" value="{{ detail[1] }}" class="form-control" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-sm btn-warning">更新</button>
+                                    </form>
+                                    <p class="text-muted">登録日時: {{ detail[2] }}</p>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">データがありません</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">家事実績入力一覧へ戻る</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_Boost.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>おぎたろうアプリ</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="{{ url_for('static', filename='chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='modal.js') }}"></script>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <!-- Apple Touch Icon（iOS用） -->
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+
+    <!-- Android用アイコン -->
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+</head>
+<body class="bg-light">
+<!-- スマホ用のメニューバー -->
+<div class="d-flex fixed-top">
+    <button class="btn btn-primary m-0 menu-button-Smartphone" onclick="toggleMenu()">≡</button>
+</div>
+<div class="d-flex">
+    <!-- サイドメニューのインクルード -->
+    {% include 'sidebar.html' %}
+    <button class="btn btn-primary m-3 menu-button" onclick="toggleMenu()">≡</button>
+    <!-- メインコンテンツ -->
+    <div class="container-fluid my-4">
+        <h1 class="fas fa-house text-center mt-3">おぎたろうアプリ</h1>
+        
+        <h2 class="mt-2">家事実績入力</h2>
+        <form method="post" action="{{ url_for('register') }}">
+            {% if works != [] %}
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>日付</th>
+                            <th>名前</th>
+                            <th>家事名</th>
+                            <th>何割?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for work in works %}
+                            <tr class="tableData">
+                                <td>{{ work.id }}</td>
+                                <td>{{ work.day }}</td>
+                                <td>{{ work.name }}</td>
+                                <td>{{ work.work }}</td>
+                                <td>{{ work.percent }}%</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-muted">記録がありません。</p>
+            {% endif %}
+        </form>
+
+        <h2 class=" mt-3 ">実績入力フォーム</h2>
+        <form class ="custom-background" onsubmit="return confirmSubmission()" method="post" action="{{ url_for('register') }}">
+            <input type="hidden" id="workId" name="workId">
+            <input type="hidden" id="workName" name="workName">
+
+            <div class="row mb-3">
+                <label for="dateInput" class="col-sm-2 col-form-label">日付</label>
+                <div class="col-sm-10">
+                    <input type="date" id="dateInput" name="day" class="form-control">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="name" class="col-sm-2 col-form-label">名前</label>
+                <div class="col-sm-10">
+                    <select name="name" class="form-select">
+                        {% for name in nameList %}
+                            <option value="{{ name }}" {% if name == request.cookies.get('name') %}selected{% endif %}>{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="workSelect" class="col-sm-2 col-form-label">家事名</label>
+                <div class="col-sm-10">
+                    <select id="workSelect" name="work" class="form-select" onchange="updateHiddenFields()">
+                        {% for work in workList %}
+                            <option value="{{ work[0] }}">{{ work[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">何割?</label>
+                <div class="col-sm-10">
+                    <div class="form-check">
+                        <input type="radio" id="percent50" name="percent" value="50" class="form-check-input">
+                        <label for="percent50" class="form-check-label">50%</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" id="percent100" name="percent" value="100" class="form-check-input" checked>
+                        <label for="percent100" class="form-check-label">100%</label>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <input type="submit" value="登録" class="btn btn-primary">
+            </div>
+        </form>
+
+        <h2 class="mt-5">人ごとの合計ポイント</h2>
+        <h3 class="text-muted">{{ current_datetime.strftime("%B") }}</h3>
+        {% if analysisResults %}
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>名前</th>
+                    <th>合計ポイント</th>
+                    <th>割合</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in analysisResults %}
+                <tr>
+                    <td>{{ result.name }}</td>
+                    <td>{{ result.total_points }}</td>
+                    <td>{{ result.percentage }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted">データがありません。</p>
+        {% endif %}
+
+        <div class="my-5">
+            <canvas id="lineChart"></canvas>
+            <canvas id="monthlyLineChart" class="mt-4"></canvas>
+        </div>
+
+    </div>
+</div>
+
+            
+    <!-- -------------------------------------------------------------------------------------------------------------- -->
+    <!-- グラフ表示 -->
+
+
+    <!-- 折れ線グラフ 日ごと人ごと -->
+    <canvas id="lineChart" width="400" height="200"></canvas>
+    <script type="module">
+        import { createLineChartDay } from "{{ url_for('static', filename='chart.js') }}";
+
+        const dates = {{ dates|tojson }};
+        const data = {{ data|tojson }};
+        createLineChartDay('lineChart', dates, data);
+    </script>
+
+
+    <!-- 折れ線グラフ月ごと人ごと -->
+    <canvas id="monthlyLineChart" width="400" height="200"></canvas>
+
+    <script type="module">
+        import { createLineChartMonth } from "{{ url_for('static', filename='chart.js') }}";
+
+        const monthlyDates = {{ monthly_dates | tojson }};
+        const monthlyData = {{ monthly_data | tojson }};
+        
+        // 月次データのグラフ描画
+        createLineChartMonth('monthlyLineChart', monthlyDates, monthlyData, 'Month', 'Total Points');
+    </script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

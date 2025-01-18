@@ -1,0 +1,55 @@
+<!-- templates/sidebar.html -->
+<nav id="sidebarMenu" class="d-none bg-dark text-white p-3 position-fixed h-100">
+    <ul class="nav flex-column">
+        <li class="nav-item mb-2">
+            <a href="#" class="btn-close btn-close-white float-end" onclick="toggleMenu()"></a>
+        </li>
+        <li class="nav-item"></li>
+            <a href="{{ url_for('index') }}" class="nav-link text-white" onclick="showLoading(); toggleIconColor(this)">
+                <i class="fas fa-house"></i> Main
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('eat') }}" class="nav-link text-white" onclick="showLoading(); toggleIconColor(this)">
+                <i class="fas fa-utensils"></i> 食費入力
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('life') }}" class="nav-link text-white" onclick="showLoading(); toggleIconColor(this)">
+                <i class="fas fa-wallet"></i> 生活費入力
+            </a>
+        </li>
+       
+        <li class="nav-item">
+            <a href="{{ url_for('option') }}" class="nav-link text-white" onclick="showLoading(); toggleIconColor(this)">
+                <i class="fas fa-cog"></i> 設定
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('admin') }}" class="nav-link text-white" onclick="if (checkAdminPassword()) { showLoading(); toggleIconColor(this); } else { return false; }">
+                <i class="fas fa-user-shield"></i> 管理者画面
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<script>
+// function showLoading() {
+//     // ローディングメッセージを表示する処理
+//     const loadingMessage = document.createElement('div');
+//     loadingMessage.innerText = 'ロード中...';
+//     loadingMessage.style.position = 'fixed';
+//     loadingMessage.style.top = '50%';
+//     loadingMessage.style.left = '50%';
+//     loadingMessage.style.transform = 'translate(-50%, -50%)';
+//     loadingMessage.style.color = 'white';
+//     loadingMessage.style.fontSize = '24px';
+//     document.body.appendChild(loadingMessage);
+    
+//     // 1秒後にメッセージを削除（必要に応じて調整）
+//     setTimeout(() => {
+//         document.body.removeChild(loadingMessage);
+//     }, 1000);
+// }
+</script>
+

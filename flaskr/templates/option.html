@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_Boost.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>option_setting</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="{{ url_for('static', filename='chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body class="bg-light">
+    <!-- スマホ用のメニューバー -->
+    <div class="d-flex fixed-top">
+        <button class="btn btn-primary m-0 menu-button-Smartphone" onclick="toggleMenu()">≡</button>
+    </div>
+
+    <div class="d-flex">
+        <!-- サイドメニューのインクルード -->
+        {% include 'sidebar.html' %}
+        <button class="btn btn-primary m-3 menu-button" onclick="toggleMenu()">≡</button>
+
+        <!-- メインコンテンツ -->
+        <div class="container-fluid my-4">
+            <h1 class="fas fa-cog text-center mt-4 mb-4">設定</h1>
+
+            <!-- 家事 -->
+            <h2 class="mt-2">家事名リスト管理</h2>
+            <form method="post" action="{{ url_for('register2') }}">
+                {% if workList != [] %}
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>家事名</th>
+                            <th>ポイント</th>
+                            <th>区分番号</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for w in workList %}
+                        <tr>
+                            <td>{{ w.id }}</td>
+                            <td>{{ w.workName }}</td>
+                            <td>{{ w.workNamePoint }}</td>
+                            <td>{{ w.家事分類区分番号 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+            </form>
+            <p class="text-muted">※1-料理, 2-掃除, 3-皿洗い, 4-洗濯, 5-ごみ捨て</p>
+
+            <h3>家事リスト挿入</h3>
+            <form method="post" action="{{ url_for('register2') }}" onsubmit="return confirmRegistration('workName', 'workNamePoint', '家事分類区分番号')">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>家事名</th>
+                            <th>ポイント</th>
+                            <th>家事分類区分番号</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="workName" class="form-control"></td>
+                            <td><input type="text" name="workNamePoint" class="form-control"></td>
+                            <td><input type="text" name="家事分類区分番号" class="form-control"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-primary">家事名登録</button>
+            </form>
+
+            <hr class="my-5">
+
+            <!-- 名前 -->
+            <h2>名前リスト管理</h2>
+            <form method="post" action="{{ url_for('register3') }}">
+                {% if nameList != [] %}
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>名前</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for n in nameList %}
+                        <tr>
+                            <td>{{ n.id }}</td>
+                            <td>{{ n.name }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+            </form>
+
+            <h3 class="mt-3">名前リスト挿入</h3>
+            <form method="post" action="{{ url_for('register3') }}" onsubmit="return confirmRegistration('name')">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>名前</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="name" class="form-control"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-primary">名前登録</button>
+            </form>
+        </div>
+
+        <hr class="my-5">
+
+        
+    </div>
+        <div class="text-center my-4">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">家事実績入力一覧へ戻る</a>
+        </div>
+</body>
+</html>

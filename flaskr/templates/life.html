@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_Boost.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>life</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="{{ url_for('static', filename='chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='modal.js') }}"></script>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+<!-- スマホ用のメニューバー -->
+<div class="d-flex fixed-top">
+    <button class="btn btn-primary m-0 menu-button-Smartphone" onclick="toggleMenu()">≡</button>
+</div>
+<div class="d-flex">
+    <!-- サイドメニューのインクルード -->
+    {% include 'sidebar.html' %}
+    <button class="btn btn-primary m-3 menu-button" onclick="toggleMenu()">≡</button>
+    <div class="container-fluid mt-5">
+        <h1 class="fas fa-wallet text-center mb-4">生活費入力画面</h1>
+        <p class="text-center">年、月ごとに生活費を入力してください。</p>
+        <form method="POST" action="{{ url_for('update_life_details') }}">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped life-table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>年</th>
+                            <th>月</th>
+                            <th>家賃</th>
+                            <th>水道代</th>
+                            <th>電気代</th>
+                            <th>ガス代</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detail in life_details %}
+                        <tr>
+                            <td>
+                                <input type="hidden" name="year-{{ loop.index }}" value="{{ detail[0] }}">
+                                {{ detail[0] }}
+                            </td>
+                            <td>
+                                <input type="hidden" name="month-{{ loop.index }}" value="{{ detail[1] }}">
+                                {{ detail[1] }}
+                            </td>
+                            <td>
+                                <span id="rent-value-{{ loop.index }}">{{ detail[2] }}</span>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="showEditModal('rent', {{ loop.index }})">編集</button>
+                            </td>
+                            <td>
+                                <span id="water-value-{{ loop.index }}">{{ detail[3] }}</span>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="showEditModal('water', {{ loop.index }})">編集</button>
+                            </td>
+                            <td>
+                                <span id="electricity-value-{{ loop.index }}">{{ detail[4] }}</span>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="showEditModal('electricity', {{ loop.index }})">編集</button>
+                            </td>
+                            <td>
+                                <span id="gas-value-{{ loop.index }}">{{ detail[5] }}</span>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="showEditModal('gas', {{ loop.index }})">編集</button>
+                            </td>
+                        </tr>
+                        <div id="rent-modal-{{ loop.index }}" class="modal">
+                            <div class="modal-content">
+                                <span class="close" onclick="closeModal('rent', {{ loop.index }})">&times;</span> <!-- 閉じるボタン -->
+                                <h2>家賃編集</h2>
+                                <input type="number" class="form-control" name="rent-{{ loop.index }}" value="{{ detail[2] }}" id="rent-input-{{ loop.index }}">
+                                <button type="submit" class="btn btn-success btn-sm mt-2" name="submit-rent-{{ loop.index }}">確定</button>
+                            </div>
+                        </div>
+                        <div id="water-modal-{{ loop.index }}" class="modal">
+                            <div class="modal-content">
+                                <span class="close" onclick="closeModal('water', {{ loop.index }})">&times;</span> <!-- 閉じるボタン -->
+                                <h2>水道代編集</h2>
+                                <input type="number" class="form-control" name="water-{{ loop.index }}" value="{{ detail[3] }}" id="water-input-{{ loop.index }}">
+                                <button type="submit" class="btn btn-success btn-sm mt-2" name="submit-water-{{ loop.index }}">確定</button>
+                            </div>
+                        </div>
+                        <div id="electricity-modal-{{ loop.index }}" class="modal">
+                            <div class="modal-content">
+                                <span class="close" onclick="closeModal('electricity', {{ loop.index }})">&times;</span> <!-- 閉じるボタン -->
+                                <h2>電気代編集</h2>
+                                <input type="number" class="form-control" name="electricity-{{ loop.index }}" value="{{ detail[4] }}" id="electricity-input-{{ loop.index }}">
+                                <button type="submit" class="btn btn-success btn-sm mt-2" name="submit-electricity-{{ loop.index }}">確定</button>
+                            </div>
+                        </div>
+                        <div id="gas-modal-{{ loop.index }}" class="modal">
+                            <div class="modal-content">
+                                <span class="close" onclick="closeModal('gas', {{ loop.index }})">&times;</span> <!-- 閉じるボタン -->
+                                <h2>ガス代編集</h2>
+                                <input type="number" class="form-control" name="gas-{{ loop.index }}" value="{{ detail[5] }}" id="gas-input-{{ loop.index }}">
+                                <button type="submit" class="btn btn-success btn-sm mt-2" name="submit-gas-{{ loop.index }}">確定</button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </form>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">家事実績入力一覧へ戻る</a>
+        </div>
+    </div>
+</div>
+    <!-- <script>
+        function toggleEdit(type, index) {
+            if (window.innerWidth <= 768) {
+                showEditModal(type, index);
+            } else {
+                const editDiv = document.getElementById(type + '-edit-' + index);
+                editDiv.style.display = editDiv.style.display === 'none' ? 'block' : 'none';
+            }
+        } -->
+
+
+
+    <!-- //     function closeModal(type, index) {
+    //         const modal = document.getElementById(type + '-modal-' + index);
+    //         modal.style.display = 'none';
+    //     } -->
+
+</body>
+</html>
