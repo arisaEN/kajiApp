@@ -1,11 +1,18 @@
-version: '3'
+version: '3.8'
+
 services:
-  flask-app:
-    image: housework-flask-app
-    ports:
-      - "5000:5000"
+  kajiapp:
+    build:
+      context: ./kajiApp 
+      dockerfile: Dockerfile
     volumes:
-      - .:/app
-    environment:
-      FLASK_ENV: development
-    restart: always  # Docker起動時に自動起動する設定
+      - ./kajiApp/flaskr/static:/app/flaskr/static
+    container_name: kajiapp
+    ports:
+      - "127.0.0.1:5000:5000"
+    networks:
+      - app-network
+    restart: always   
+networks:
+  app-network:
+    driver: bridge

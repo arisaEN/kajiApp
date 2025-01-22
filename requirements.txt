@@ -13,3 +13,6 @@ PyQt5_sip==12.15.0
 sip==6.8.6
 tomli==2.0.1
 Werkzeug==3.0.4
+gunicorn==20.1.0
+pandas==2.1.2
+matplotlib==3.8.0
