@@ -4,6 +4,9 @@ import sqlite3
 from flask import Flask
 
 app = Flask(__name__)
+#app.config.from_mapping(SECRET_KEY="dev")
+# app = Flask(__name__, static_url_path='/kajiApp/static')
+#app = Flask(__name__, static_url_path='/kajiApp/static', static_folder='static')
 import flaskr.main
 
 from flaskr import db

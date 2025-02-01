@@ -43,7 +43,7 @@ export function createLineChartDay(ctxId, dates, data) {
             },
             scales: {
                 x: {
-                    display: window.innerWidth > 768,
+                    display: window.innerWidth > 0, //768と指定するとスマホ版のレイアウトに変更可能
                     title: {
                         display: false,
                     },
@@ -134,7 +134,7 @@ export function createLineChartMonth(ctxId, dates, data, xAxisLabel = 'Date', yA
             },
             scales: {
                 x: {
-                    display: window.innerWidth > 768,
+                    display: window.innerWidth > 0, //768と指定するとスマホ版のレイアウトに変更可能
                     title: {
                         display: false,
                     },

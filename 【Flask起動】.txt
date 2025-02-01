@@ -1,0 +1,9 @@
+【Flask起動】
+cd C:\Users\Root\Videos\家事記録アプリ テスト環境
+venv\Scripts\activate
+set FLASK_APP=flaskr 
+set FLASK_ENV=development
+set FLASK_DEBUG=1
+flask run --host=0.0.0.0 --debug
+
+
